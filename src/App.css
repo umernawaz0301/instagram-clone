@@ -7,6 +7,12 @@
   padding: 20px;
   border-bottom: 1px solid #d3d3d3;
   object-fit: contain;
+  display: flex;
+  justify-content: space-between;
+}
+
+.app__headerImage{
+  object-fit: contain;
 }
 
 .app__signup {
