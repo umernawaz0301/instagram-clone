@@ -1,44 +1,42 @@
 import React, { useState, useEffect } from "react";
-import firebase from 'firebase'
+import firebase from "firebase";
 import Avatar from "@material-ui/core/Avatar";
 import "./Post.css";
 import { db } from "./firebase";
 
 const Post = ({ username, userImage, caption, imageUrl, postId, user }) => {
-  const [comment, setComment] = useState('')
-  const [comments, setComments] = useState([])
+  const [comment, setComment] = useState("");
+  const [comments, setComments] = useState([]);
 
-  useEffect(()=>{
-    let unsubscribe
-    if(postId){
+  useEffect(() => {
+    let unsubscribe;
+    if (postId) {
       unsubscribe = db
-      .collection("posts")
-      .doc(postId)
-      .collection("comments")
-      .orderBy('timestamp', 'desc')
-      .onSnapshot((snapshot) =>
-        setComments(snapshot.docs.map((doc) => doc.data()))
-      );
+        .collection("posts")
+        .doc(postId)
+        .collection("comments")
+        .orderBy("timestamp", "desc")
+        .onSnapshot((snapshot) =>
+          setComments(
+            snapshot.docs.map((doc) => ({ id: doc.id, comment: doc.data() }))
+          )
+        );
     }
     return () => {
       // clean up function
       unsubscribe();
     };
-  }, [postId])
+  }, [postId]);
 
   const postComment = (event) => {
     event.preventDefault();
-    db
-      .collection("posts")
-      .doc(postId)
-      .collection('comments')
-      .add({
-        text: comment,
-        username: user.displayName,
-        timestamp:  firebase.firestore.FieldValue.serverTimestamp(),
-      })
-      setComment('')
-  }
+    db.collection("posts").doc(postId).collection("comments").add({
+      text: comment,
+      username: user.displayName,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    });
+    setComment("");
+  };
   return (
     <div className="post">
       <div className="post__header">
@@ -52,28 +50,30 @@ const Post = ({ username, userImage, caption, imageUrl, postId, user }) => {
       </h4>
 
       <div className="posts__comments">
-        {comments.map(comment=>(
-          <p>
+        {comments.map(({ id, comment }) => (
+          <p key={id}>
             <b>{comment.username}</b> {comment.text}
-            </p>
+          </p>
         ))}
       </div>
 
       {user && (
         <form className="post__commentBox">
           <input
-          type="text"
-          className="post__input"
-          placeholder="Add a comment..."
-          value={comment}
-          onChange={(e)=> setComment(e.target.value)}
+            type="text"
+            className="post__input"
+            placeholder="Add a comment..."
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
           />
-          <button 
-          disabled={!comment} 
-          type="submit" 
-          className="post__button"
-          onClick={postComment}
-          >Post</button>
+          <button
+            disabled={!comment}
+            type="submit"
+            className="post__button"
+            onClick={postComment}
+          >
+            Post
+          </button>
         </form>
       )}
     </div>
