@@ -6,7 +6,7 @@ import Modal from "@material-ui/core/Modal";
 import "./App.css";
 import { Button, Input } from "@material-ui/core";
 import ImageUpload from "./ImageUpload.js";
-import InstagramEmbed from 'react-instagram-embed';
+import InstagramEmbed from "react-instagram-embed";
 
 function rand() {
   return Math.round(Math.random() * 20) - 10;
@@ -69,7 +69,7 @@ const App = () => {
   useEffect(() => {
     const unsubscribe = db
       .collection("posts")
-      .orderBy('timestamp', 'desc')
+      .orderBy("timestamp", "desc")
       .onSnapshot((snapshot) =>
         setPosts(snapshot.docs.map((doc) => ({ id: doc.id, post: doc.data() })))
       );
@@ -103,7 +103,6 @@ const App = () => {
   };
   return (
     <div className="app">
-
       <Modal
         open={open}
         onClose={() => {
@@ -182,18 +181,16 @@ const App = () => {
           alt="Instagram"
         />
         {user ? (
-        <Button onClick={() => auth.signOut()}>Logout</Button>
-      ) : (
-        <div>
-          <Button onClick={() => setOpenSignIn(true)}>Sign in</Button>
-          <Button onClick={() => setOpen(true)}>Sign up!</Button>
-        </div>
-      )}
+          <Button onClick={() => auth.signOut()}>Logout</Button>
+        ) : (
+          <div>
+            <Button onClick={() => setOpenSignIn(true)}>Sign in</Button>
+            <Button onClick={() => setOpen(true)}>Sign up!</Button>
+          </div>
+        )}
       </div>
-      
 
       <div className="app__posts">
-        
         <div className="app__postsLeft">
           {posts.map(({ id, post }) => (
             <Post key={id} user={user} postId={id} {...post} />
@@ -201,26 +198,26 @@ const App = () => {
         </div>
         <div className="app__postsRight">
           <InstagramEmbed
-            url='https://www.instagram.com/p/CDI8ULZsFdg/'
+            url="https://www.instagram.com/p/CDI8ULZsFdg/"
             maxWidth={320}
             hideCaption={false}
-            containerTagName='div'
-            protocol=''
+            containerTagName="div"
+            protocol=""
             injectScript
             onLoading={() => {}}
             onSuccess={() => {}}
             onAfterRender={() => {}}
             onFailure={() => {}}
-            />
+          />
         </div>
       </div>
-
-     
 
       {user?.displayName ? (
         <ImageUpload username={user.displayName} />
       ) : (
-        <h3>Sorry you need to login to upload</h3>
+        <h3 style={{ textAlign: "center" }}>
+          Sorry you need to login to upload
+        </h3>
       )}
     </div>
   );
